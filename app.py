@@ -2,10 +2,19 @@ from flask import Flask, render_template
 from flask_socketio import SocketIO
 import time
 import threading
-#import 
+import random as rd
+import firebase_admin
+from firebase_admin import credentials, firestore
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 socketio = SocketIO(app)
+
+cred = credentials.Certificate("data-streaming-39988-firebase-adminsdk-54sqr-dac41d3dd2.json")
+firebase_admin.initialize_app(cred)
+db = firestore.client()
+
+
 
 def data_generator():
     """Generador de datos simulados."""
@@ -16,8 +25,18 @@ def data_generator():
         #counter += 1
         counter_1=counter_1+1
         counter_2=counter_2+2
-        counter_3=[counter_1,counter_2]
-        yield counter_3
+        counter_3=rd.randint(1,100)
+        counter_4=[counter_1,counter_2,counter_3]
+
+        # Guarda los datos en Cloud Firestore
+        doc_ref = db.collection('data').add({
+            'contador_!': counter_1,
+            'contador_2': counter_2,
+            'contador_3': counter_3,
+            'timestamp': firestore.SERVER_TIMESTAMP
+        })
+
+        yield counter_4
 
 @app.route('/')
 def index():

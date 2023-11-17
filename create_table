@@ -1,0 +1,31 @@
+from google.cloud.sql.connector import Connector
+import psycopg2
+
+# Configuración de la conexión a la base de datos
+connection_config = {
+    "user": "postgres",
+    "password": "",
+    "host": "",
+    "database": "stream_data"
+}
+
+# Query para crear una tabla (modifica según tus necesidades)
+create_table_query = """
+    CREATE TABLE IF NOT EXISTS ejemplo (
+        id SERIAL PRIMARY KEY,
+        nombre VARCHAR(255),
+        edad INT
+    );
+"""
+
+# Función para ejecutar la consulta
+def execute_query(query):
+    connection = psycopg2.connect(**connection_config)
+    cursor = connection.cursor()
+    cursor.execute(query)
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+# Ejecutar la consulta para crear la tabla
+execute_query(create_table_query)
