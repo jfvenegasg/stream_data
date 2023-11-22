@@ -1,31 +1,14 @@
-from google.cloud.sql.connector import Connector
-import psycopg2
+import sqlalchemy
+from sqlalchemy import create_engine
 
-# Configuración de la conexión a la base de datos
-connection_config = {
-    "user": "postgres",
-    "password": "",
-    "host": "",
-    "database": "stream_data"
-}
+engine = connect_tcp_socket()
 
-# Query para crear una tabla (modifica según tus necesidades)
-create_table_query = """
-    CREATE TABLE IF NOT EXISTS ejemplo (
-        id SERIAL PRIMARY KEY,
-        nombre VARCHAR(255),
-        edad INT
-    );
+table_name = "your_table_name"
+sql_query = f"""
+CREATE TABLE IF NOT EXISTS {table_name} (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    -- Add your table columns and their data types here
+);
 """
-
-# Función para ejecutar la consulta
-def execute_query(query):
-    connection = psycopg2.connect(**connection_config)
-    cursor = connection.cursor()
-    cursor.execute(query)
-    connection.commit()
-    cursor.close()
-    connection.close()
-
-# Ejecutar la consulta para crear la tabla
-execute_query(create_table_query)
+with engine.connect() as connection:
+    connection.execute(sql_query)
